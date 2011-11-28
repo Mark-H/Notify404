@@ -2,7 +2,7 @@
 /*
  * Notify404
  *
- * Copyright 2011 by Mark Hamstra (contact via www.markhamstra.nl)
+ * Copyright 2011 by Mark Hamstra <hello@markhamstra.com>
  *
  * This plugin is part of Notify404, an email notification utility for 404 errors.
  *
@@ -19,6 +19,9 @@
  * VersionX; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
  * Suite 330, Boston, MA 02111-1307 USA
  *
+ */
+/* @var modX $modx
+ * @var array $scriptProperties
  */
     /* Please fill these variables with the required configuration */
     // E-mail address to send the email to.
