@@ -23,20 +23,15 @@
 /* @var modX $modx
  * @var array $scriptProperties
  */
-    /* Please fill these variables with the required configuration */
-    // E-mail address to send the email to.
-    $mailto = '';
-    // E-mail address to use as the "from" field.
-    $mailfrom = 'noreply@site.com';
-    // E-mail address to send along as the "reply-to" email.
-    $replyto = 'noreply@site.com';
-    // Chunk name to use as email template. notifyTpl is default.
-    $mailchunk = 'notifyTpl';
+    $mailto = $modx->getOption('notify404.mail.to',null, $modx->getOption('emailsender'));
+    $mailfrom = $modx->getOption('notify404.mail.from',null, $modx->getOption('emailsender'));
+    $replyto = $modx->getOption('notify404.mail.replyto',null, $modx->getOption('emailsender'));
+    $mailchunk = $modx->getOption('notify404.mail.template',null, 'notifyTpl');
 
     /* Unless you know PHP and want to modify this plugin, do not edit below */
     /*************************************************************************/
-    if ($mailto == '') {
-        $modx->log(modX::LOG_LEVEL_ERROR,'Error: mailto not specified for Notify404');
+    if (empty($mailto)) {
+        $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: mailto not specified for Notify404. Go to System Settings, find the Notify404 namespace and add the email to notify to the notify404.mail.to setting.');
         return;
     }
 
@@ -49,18 +44,8 @@
 
     if (strstr($phs['request'],'reflect')) { return; }
     $message = $modx->getChunk($mailchunk,$phs);
-    if ($message == '') {
-        $message = '<p>This is an automated email notification of a 404 error that has occured on the [[++site_name]] website.
-         
-        <strong>Date & time</strong>: [[+timestamp]]
-        <strong>Requested</strong>: [[+request]]
-        <strong>Host</strong>: [[+host]]
-        <strong>Visitor IP</strong>: [[+ip]]
-        <strong>Referer</strong>: [[+referer]]
-        </strong>User agent</strong>: [[+user_agent]]
-         
-        These automatic notifications can be disabled by disabling the Notify404 plugin in your [[++site_name]] manager.
-        Sent by Notify404 from [[++site_url]]</p>';
+    if (empty($message)) {
+        $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: empty message. Most likely the Notify404 template chunk does not exist or hasn\'t been set.');
     }
 
     $modx->getService('mail', 'mail.modPHPMailer');
@@ -73,7 +58,9 @@
     $modx->mail->address('reply-to',$replyto);
     $modx->mail->setHTML(true);
     if (!$modx->mail->send()) {
-        $modx->log(modX::LOG_LEVEL_ERROR,'An error occurred while trying to send the email: ');
+        $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] An error occurred while trying to send a 404 Page Not Found notification email.');
     }
     $modx->mail->reset();
+return true;
+
 ?>
