@@ -30,37 +30,47 @@
   // Chunk name to use as email template. notifyTpl is default.
   $mailchunk = 'notifyTpl';
 
-  /* Unless you know PHP and want to modify this plugin, do not edit below */
-  /*************************************************************************/
+    /* Unless you know PHP and want to modify this plugin, do not edit below */
+    /*************************************************************************/
+    if ($mailto == '') {
+        $modx->log(modX::LOG_LEVEL_ERROR,'Error: mailto not specified for Notify404');
+        return;
+    }
 
-  if ($mailto == '') {
-    $modx->log(modX::LOG_LEVEL_ERROR,'Error: mailto not specified for Notify404');
-    return;
-  }
-  
-  $phs['ip'] = $_SERVER['REMOTE_ADDR'];
-  $phs['request'] = 'http'. ($_SERVER['HTTPS'] ? 's' : null) .'://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-  $phs['timestamp'] = date('d M Y - G:i:s');
+    $phs['ip'] = $_SERVER['REMOTE_ADDR'];
+    $phs['host'] = 'http'. ($_SERVER['HTTPS'] ? 's' : null) .'://'. $_SERVER['HTTP_HOST'];
+    $phs['request'] = $_SERVER['REQUEST_URI'];
+    $phs['timestamp'] = date('d M Y - G:i:s');
+    $phs['referer'] = ($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'Not available.';
+    $phs['user_agent'] = ($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Not available.';
 
-  $message = $modx->getChunk($mailchunk,$phs);
-  if ($message == '') {
-    $message = 'ERROR: no valid chunk set for Notify404 - notifytpl<br />
-Date / time: [[+timestamp]]<br />
-Requested: [[+request]]<br />
-Visitor IP: [[+ip]]';
-  }
+    if (strstr($phs['request'],'reflect')) { return; }
+    $message = $modx->getChunk($mailchunk,$phs);
+    if ($message == '') {
+        $message = '<p>This is an automated email notification of a 404 error that has occured on the [[++site_name]] website.
+         
+        <strong>Date & time</strong>: [[+timestamp]]
+        <strong>Requested</strong>: [[+request]]
+        <strong>Host</strong>: [[+host]]
+        <strong>Visitor IP</strong>: [[+ip]]
+        <strong>Referer</strong>: [[+referer]]
+        </strong>User agent</strong>: [[+user_agent]]
+         
+        These automatic notifications can be disabled by disabling the Notify404 plugin in your [[++site_name]] manager.
+        Sent by Notify404 from [[++site_url]]</p>';
+    }
 
-  $modx->getService('mail', 'mail.modPHPMailer');
-  $modx->mail->set(modMail::MAIL_BODY,$message);
-  $modx->mail->set(modMail::MAIL_FROM,$mailfrom);
-  $modx->mail->set(modMail::MAIL_FROM_NAME,'Notify404');
-  $modx->mail->set(modMail::MAIL_SENDER,'Notify404');
-  $modx->mail->set(modMail::MAIL_SUBJECT,'[Notfy404] Not found: '.$phs['request']);
-  $modx->mail->address('to',$mailto);
-  $modx->mail->address('reply-to',$replyto);
-  $modx->mail->setHTML(true);
-  if (!$modx->mail->send()) {
-      $modx->log(modX::LOG_LEVEL_ERROR,'An error occurred while trying to send the email: '.$err);
-  }
-  $modx->mail->reset();
+    $modx->getService('mail', 'mail.modPHPMailer');
+    $modx->mail->set(modMail::MAIL_BODY,$message);
+    $modx->mail->set(modMail::MAIL_FROM,$mailfrom);
+    $modx->mail->set(modMail::MAIL_FROM_NAME,'Notify404');
+    $modx->mail->set(modMail::MAIL_SENDER,'Notify404');
+    $modx->mail->set(modMail::MAIL_SUBJECT,'[Notify404] Not found: '.$phs['request']);
+    $modx->mail->address('to',$mailto);
+    $modx->mail->address('reply-to',$replyto);
+    $modx->mail->setHTML(true);
+    if (!$modx->mail->send()) {
+        $modx->log(modX::LOG_LEVEL_ERROR,'An error occurred while trying to send the email: ');
+    }
+    $modx->mail->reset();
 ?>
