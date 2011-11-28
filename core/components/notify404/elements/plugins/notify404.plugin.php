@@ -20,15 +20,15 @@
  * Suite 330, Boston, MA 02111-1307 USA
  *
  */
-  /* Please fill these variables with the required configuration */
-  // E-mail address to send the email to.
-  $mailto = '';
-  // E-mail address to use as the "from" field.
-  $mailfrom = 'noreply@site.com';
-  // E-mail address to send along as the "reply-to" email.
-  $replyto = 'noreply@site.com';
-  // Chunk name to use as email template. notifyTpl is default.
-  $mailchunk = 'notifyTpl';
+    /* Please fill these variables with the required configuration */
+    // E-mail address to send the email to.
+    $mailto = '';
+    // E-mail address to use as the "from" field.
+    $mailfrom = 'noreply@site.com';
+    // E-mail address to send along as the "reply-to" email.
+    $replyto = 'noreply@site.com';
+    // Chunk name to use as email template. notifyTpl is default.
+    $mailchunk = 'notifyTpl';
 
     /* Unless you know PHP and want to modify this plugin, do not edit below */
     /*************************************************************************/
