@@ -20,47 +20,51 @@
  * Suite 330, Boston, MA 02111-1307 USA
  *
  */
+
 /* @var modX $modx
  * @var array $scriptProperties
  */
-    $mailto = $modx->getOption('notify404.mail.to',null, $modx->getOption('emailsender'));
-    $mailfrom = $modx->getOption('notify404.mail.from',null, $modx->getOption('emailsender'));
-    $replyto = $modx->getOption('notify404.mail.replyto',null, $modx->getOption('emailsender'));
-    $mailchunk = $modx->getOption('notify404.mail.template',null, 'notifyTpl');
 
-    /* Unless you know PHP and want to modify this plugin, do not edit below */
-    /*************************************************************************/
-    if (empty($mailto)) {
-        $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: mailto not specified for Notify404. Go to System Settings, find the Notify404 namespace and add the email to notify to the notify404.mail.to setting.');
-        return;
-    }
+/* Set up some variables */
+$mailto = $modx->getOption('notify404.mail.to',null, $modx->getOption('emailsender'));
+$mailfrom = $modx->getOption('notify404.mail.from',null, $modx->getOption('emailsender'));
+$replyto = $modx->getOption('notify404.mail.replyto',null, $modx->getOption('emailsender'));
+$mailchunk = $modx->getOption('notify404.mail.template',null, 'notifyTpl');
 
-    $phs['ip'] = $_SERVER['REMOTE_ADDR'];
-    $phs['host'] = 'http'. ($_SERVER['HTTPS'] ? 's' : null) .'://'. $_SERVER['HTTP_HOST'];
-    $phs['request'] = $_SERVER['REQUEST_URI'];
-    $phs['timestamp'] = date('d M Y - G:i:s');
-    $phs['referer'] = ($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'Not available.';
-    $phs['user_agent'] = ($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Not available.';
+if (empty($mailto)) {
+    $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: mailto not specified for Notify404. Go to System Settings, find the Notify404 namespace and add the email to notify to the notify404.mail.to setting.');
+    return;
+}
 
-    if (strstr($phs['request'],'reflect')) { return; }
-    $message = $modx->getChunk($mailchunk,$phs);
-    if (empty($message)) {
-        $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: empty message. Most likely the Notify404 template chunk does not exist or hasn\'t been set.');
-    }
+/* Prepare the data */
+$phs = array();
+$phs['ip'] = $_SERVER['REMOTE_ADDR'];
+$phs['host'] = 'http'. ($_SERVER['HTTPS'] ? 's' : null) .'://'. $_SERVER['HTTP_HOST'];
+$phs['request'] = $_SERVER['REQUEST_URI'];
+$phs['timestamp'] = date('d M Y - G:i:s');
+$phs['referer'] = ($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'Not available.';
+$phs['user_agent'] = ($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Not available.';
 
-    $modx->getService('mail', 'mail.modPHPMailer');
-    $modx->mail->set(modMail::MAIL_BODY,$message);
-    $modx->mail->set(modMail::MAIL_FROM,$mailfrom);
-    $modx->mail->set(modMail::MAIL_FROM_NAME,'Notify404');
-    $modx->mail->set(modMail::MAIL_SENDER,'Notify404');
-    $modx->mail->set(modMail::MAIL_SUBJECT,'[Notify404] Not found: '.$phs['request']);
-    $modx->mail->address('to',$mailto);
-    $modx->mail->address('reply-to',$replyto);
-    $modx->mail->setHTML(true);
-    if (!$modx->mail->send()) {
-        $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] An error occurred while trying to send a 404 Page Not Found notification email.');
-    }
-    $modx->mail->reset();
+/* Set the message */
+$message = $modx->getChunk($mailchunk,$phs);
+if (empty($message)) {
+    $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: empty message. Most likely the Notify404 template chunk does not exist or hasn\'t been set.');
+}
+
+/* Send the email */
+$modx->getService('mail', 'mail.modPHPMailer');
+$modx->mail->set(modMail::MAIL_BODY,$message);
+$modx->mail->set(modMail::MAIL_FROM,$mailfrom);
+$modx->mail->set(modMail::MAIL_FROM_NAME,'Notify404');
+$modx->mail->set(modMail::MAIL_SENDER,'Notify404');
+$modx->mail->set(modMail::MAIL_SUBJECT,'[Notify404] Not found: '.$phs['request']);
+$modx->mail->address('to',$mailto);
+$modx->mail->address('reply-to',$replyto);
+$modx->mail->setHTML(true);
+if (!$modx->mail->send()) {
+    $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] An error occurred while trying to send a 404 Page Not Found notification email.');
+}
+$modx->mail->reset();
 return true;
 
 ?>
