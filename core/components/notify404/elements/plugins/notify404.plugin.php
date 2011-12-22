@@ -49,6 +49,7 @@ $phs['user_agent'] = ($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']
 $message = $modx->getChunk($mailchunk,$phs);
 if (empty($message)) {
     $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: empty message. Most likely the Notify404 template chunk does not exist or hasn\'t been set.');
+    $message = 'A 404 error was encountered on the site, however Notify404 isn\'t configured properly and cannot provide you properly formatted data. <br /> '.print_r($phs,true);
 }
 
 /* Send the email */

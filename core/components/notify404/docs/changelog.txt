@@ -1,3 +1,4 @@
+When no message was set (ie no template specified or is empty), default to a standard message that dumps the data on screen.
 Prevent "[OnPageNotFound]1" in error log after a 404 has been triggered.
 Fix indentation in tpl.
 Refactor part of the plugin to include more data such as referer.
