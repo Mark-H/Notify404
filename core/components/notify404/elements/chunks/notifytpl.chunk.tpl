@@ -1,5 +1,5 @@
 <p>This is an automated email notification of a 404 error that has occured on the [[++site_name]] website.</p>
-<p>        
+<p>
     <strong>Date & time</strong>: [[+timestamp]] <br />
     <strong>Requested</strong>: [[+request]] <br />
     <strong>Host</strong>: [[+host]] <br />

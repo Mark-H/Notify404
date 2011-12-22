@@ -1,3 +1,6 @@
+Fix indentation in tpl.
+Refactor part of the plugin to include more data such as referer.
+
 ++++++++++++++++++++++++++++++++++++
 ++                                ++
 ++    Notify404 1.0.0-pl          ++
