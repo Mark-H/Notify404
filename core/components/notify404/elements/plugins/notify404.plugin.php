@@ -65,6 +65,6 @@ if (!$modx->mail->send()) {
     $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] An error occurred while trying to send a 404 Page Not Found notification email.');
 }
 $modx->mail->reset();
-return true;
+return '';
 
 ?>
