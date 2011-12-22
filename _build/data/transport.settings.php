@@ -3,6 +3,7 @@ $s = array(
     'mailTo' => '',
     'mailFrom' => '',
     'mailReplyto' => '',
+    'mailTemplate' => 'notifyDefaultTpl',
 );
 
 $settings = array();
