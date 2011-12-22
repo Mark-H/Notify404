@@ -11,5 +11,5 @@
     Automatic notifications like these can be disabled by disabling the Notify404 plugin in your [[++site_name]] MODX Manager.
 </p>
 <p style="font-style: italic;">
-    Powered by Notify404, developed by <a href="http://www.markhamstra.com">Mark Hamstra</a>
+    Powered by Notify404, developed by <a href="http://www.markhamstra.com/l/n404">Mark Hamstra</a>.
 </p>
