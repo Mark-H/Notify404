@@ -26,13 +26,13 @@
  */
 
 /* Set up some variables */
-$mailto = $modx->getOption('notify404.mail.to',null, $modx->getOption('emailsender'));
-$mailfrom = $modx->getOption('notify404.mail.from',null, $modx->getOption('emailsender'));
-$replyto = $modx->getOption('notify404.mail.replyto',null, $modx->getOption('emailsender'));
-$mailchunk = $modx->getOption('notify404.mail.template',null, 'notifyTpl');
+$mailto = $modx->getOption('notify404.mailTo',null, $modx->getOption('emailsender'));
+$mailfrom = $modx->getOption('notify404.mailFrom',null, $modx->getOption('emailsender'));
+$replyto = $modx->getOption('notify404.mailReplyTo',null, $modx->getOption('emailsender'));
+$mailchunk = $modx->getOption('notify404.mailTemplate',null, 'notifyDefaultTpl');
 
 if (empty($mailto)) {
-    $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: mailto not specified for Notify404. Go to System Settings, find the Notify404 namespace and add the email to notify to the notify404.mail.to setting.');
+    $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: mailto not specified for Notify404. Go to System Settings, find the Notify404 namespace and add the right email to notify to the notify404.mailTo setting.');
     return;
 }
 

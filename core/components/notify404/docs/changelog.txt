@@ -1,7 +1,13 @@
+++++++++++++++++++++++++++++++++++++
+++                                ++
+++    Notify404 1.1.0-pl          ++
+++         Released: 22/12/2011   ++
+++                                ++
+++++++++++++++++++++++++++++++++++++
 When no message was set (ie no template specified or is empty), default to a standard message that dumps the data on screen.
-Prevent "[OnPageNotFound]1" in error log after a 404 has been triggered.
+Prevent harmless error in error log when the plugin has been triggered.
 Fix indentation in tpl.
-Refactor part of the plugin to include more data such as referer.
+Refactor part of the plugin to include more data such as referrer and allow easier customization of emails.
 
 ++++++++++++++++++++++++++++++++++++
 ++                                ++
