@@ -4,6 +4,8 @@ $s = array(
     'mailFrom' => '',
     'mailReplyto' => '',
     'mailTemplate' => 'notifyDefaultTpl',
+    'autoban' => true,
+    'autoban.expiration' => 5,
 );
 
 $settings = array();

@@ -1,5 +1,13 @@
 ++++++++++++++++++++++++++++++++++++
 ++                                ++
+++    Notify404 1.2.0-rc1         ++
+++         Released: 07/01/2012   ++
+++                                ++
+++++++++++++++++++++++++++++++++++++
+Add integration with Rampart for auto banning. Requires an updated version of Rampart to deny access to the site.
+
+++++++++++++++++++++++++++++++++++++
+++                                ++
 ++    Notify404 1.1.0-pl          ++
 ++         Released: 22/12/2011   ++
 ++                                ++

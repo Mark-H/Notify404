@@ -38,40 +38,42 @@ if (empty($mailto)) {
 
 /* Auto-ban using RAMPART when requesting a known hack */
 $banned = false;
-$knownhacks = array(
-    'assets/snippets/reflect/snippet.reflect.php?reflect_base=', 'muieblackcat',
-    'admin/pma/index.php', 'admin/phpmyadmin/index.php', 'dbadmin/index.php', 'myadmin/index.php', 'mysql/index.php',
-    'mysqladmin/index.php', 'typo3/phpmyadmin/index.php', 'phpadmin/index.php', 'phpmyadmin1/index.php', 'phpmyadmin2/index.php',
-    'xampp/phpmyadmin/index.php', 'websql/index.php', 'phpmyadmin/index.php',
-);
-foreach ($knownhacks as $needle) {
-    if (stripos($_SERVER['REQUEST_URI'],$needle)) {
-        $block = true;
-
-        $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';
-        $rampart = $modx->getService('rampart','Rampart',$modelPath.'rampart/');
-        if ($rampart instanceof Rampart) {
-            /* @var Rampart $rampart */
-            $ban = array(
-                Rampart::STATUS => Rampart::STATUS_BANNED,
-                Rampart::REASON => '',
-                Rampart::IP => $_SERVER['REMOTE_ADDR'],
-                Rampart::HOSTNAME => gethostbyaddr($_SERVER['REMOTE_ADDR']),
-                Rampart::EMAIL => '',
-                Rampart::USERNAME => '',
-                Rampart::USER_AGENT => $_SERVER['HTTP_USER_AGENT'],
-                Rampart::EXPIRATION	=> 30, //days
-                Rampart::REASON => 'Hack attempt found by Notify404. Known hack attempt '.$needle.' in request '. $_SERVER['REQUEST_URI'],
-                Rampart::SERVICE => 'Notify404',
-            );
-            
-            /* Rampart uses $modx->resource->get('id'), so we need to prevent that from breaking */
-            $modx->resource = $modx->getObject('modResource',$modx->getOption('error_page'));
-            if ($rampart->addBan($ban)) {
-                $banned = true;
+if ($modx->getOption('notify404.autoban',null,true)) {
+    $knownhacks = array(
+        'assets/snippets/reflect/snippet.reflect.php?reflect_base=', 'muieblackcat',
+        'admin/pma/index.php', 'admin/phpmyadmin/index.php', 'dbadmin/index.php', 'myadmin/index.php', 'mysql/index.php',
+        'mysqladmin/index.php', 'typo3/phpmyadmin/index.php', 'phpadmin/index.php', 'phpmyadmin1/index.php', 'phpmyadmin2/index.php',
+        'xampp/phpmyadmin/index.php', 'websql/index.php', 'phpmyadmin/index.php',
+    );
+    foreach ($knownhacks as $needle) {
+        if (stripos($_SERVER['REQUEST_URI'],$needle)) {
+            $block = true;
+    
+            $modelPath = $modx->getOption('rampart.core_path',null,$modx->getOption('core_path').'components/rampart/').'model/';
+            $rampart = $modx->getService('rampart','Rampart',$modelPath.'rampart/');
+            if ($rampart instanceof Rampart) {
+                /* @var Rampart $rampart */
+                $ban = array(
+                    Rampart::STATUS => Rampart::STATUS_BANNED,
+                    Rampart::REASON => '',
+                    Rampart::IP => $_SERVER['REMOTE_ADDR'],
+                    Rampart::HOSTNAME => gethostbyaddr($_SERVER['REMOTE_ADDR']),
+                    Rampart::EMAIL => '',
+                    Rampart::USERNAME => '',
+                    Rampart::USER_AGENT => $_SERVER['HTTP_USER_AGENT'],
+                    Rampart::EXPIRATION	=> $modx->getOption('notify404.autoban.expiration',null,5), //days
+                    Rampart::REASON => 'Hack attempt found by Notify404. Known hack attempt '.$needle.' in request '. $_SERVER['REQUEST_URI'],
+                    Rampart::SERVICE => 'Notify404',
+                );
+                
+                /* Rampart uses $modx->resource->get('id'), so we need to prevent that from breaking */
+                $modx->resource = $modx->getObject('modResource',$modx->getOption('error_page'));
+                if ($rampart->addBan($ban)) {
+                    $banned = true;
+                }
             }
+            break;
         }
-        break;
     }
 }
 /* Prepare the data */
