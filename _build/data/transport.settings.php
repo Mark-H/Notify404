@@ -3,6 +3,7 @@ $s = array(
     'mailTo' => '',
     'mailFrom' => '',
     'mailReplyto' => '',
+    'filter' => 'notifyDefaultFilter',
     'mailTemplate' => 'notifyDefaultTpl',
     'autoban' => true,
     'autoban.expiration' => 5,
