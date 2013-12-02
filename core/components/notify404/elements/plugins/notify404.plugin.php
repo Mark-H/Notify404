@@ -30,6 +30,7 @@ $mailto = $modx->getOption('notify404.mailTo',null, $modx->getOption('emailsende
 $mailfrom = $modx->getOption('notify404.mailFrom',null, $modx->getOption('emailsender'));
 $replyto = $modx->getOption('notify404.mailReplyTo',null, $modx->getOption('emailsender'));
 $mailchunk = $modx->getOption('notify404.mailTemplate',null, 'notifyDefaultTpl');
+$filterchunk = $modx->getOption('notify404.filter',null, 'notifyDefaultFilter');
 
 if (empty($mailto)) {
     $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] Error: mailto not specified for Notify404. Go to System Settings, find the Notify404 namespace and add the right email to notify to the notify404.mailTo setting.');
@@ -43,7 +44,7 @@ if ($modx->getOption('notify404.autoban',null,true)) {
         'assets/snippets/reflect/snippet.reflect.php?reflect_base=', 'muieblackcat',
         'admin/pma/index.php', 'admin/phpmyadmin/index.php', 'dbadmin/index.php', 'myadmin/index.php', 'mysql/index.php',
         'mysqladmin/index.php', 'typo3/phpmyadmin/index.php', 'phpadmin/index.php', 'phpmyadmin1/index.php', 'phpmyadmin2/index.php',
-        'xampp/phpmyadmin/index.php', 'websql/index.php', 'phpmyadmin/index.php',
+        'xampp/phpmyadmin/index.php', 'websql/index.php', 'phpmyadmin/index.php', '/admin', '/FCKeditor'
     );
     foreach ($knownhacks as $needle) {
         if (stripos($_SERVER['REQUEST_URI'],$needle)) {
@@ -73,6 +74,44 @@ if ($modx->getOption('notify404.autoban',null,true)) {
                 }
             }
             break;
+        }
+    }
+}
+
+/* Filter based on user rules */
+$filterText = $modx->getChunk($filterchunk);
+$filterLines = explode("\n", $filterText);
+$haystack = '';
+
+$modx->log(modX::LOG_LEVEL_DEBUG,'[Notify404] Raw filter is ' . $filterText);
+
+if(is_array($filterLines)){
+    foreach ($filterLines as $line) {
+        $filter = explode(':' , $line);
+
+        $modx->log(modX::LOG_LEVEL_DEBUG,'[Notify404] Processing line ' . var_export($filter, true));
+
+        switch (strtolower($filter[0])){
+            case 'host':
+                $haystack = 'http' . ($_SERVER['HTTPS'] ? 's' : null) . '://' . $_SERVER['HTTP_HOST'];
+                break;
+            case 'ip':
+                $haystack = $_SERVER['REMOTE_ADDR'];
+                break;
+            case 'url':
+                $haystack = $_SERVER['REQUEST_URI'];
+                break;
+            case 'ua':
+                $haystack = $_SERVER['HTTP_USER_AGENT'];
+                break;
+            default:
+                $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] An error occurred processing the filter: ' . $line);
+        }
+
+        if (strpos($haystack, trim($filter[1])) > 0) {
+            $modx->log(modX::LOG_LEVEL_DEBUG,'[Notify404] Filter match, not sending email. Filter was: ' . $line
+                . ', matched on: ' . $haystack);
+            return;
         }
     }
 }
