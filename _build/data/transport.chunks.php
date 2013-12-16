@@ -9,6 +9,15 @@ $chunks[1]->fromArray(array(
     'properties' => '',
 ),'',true,true);
 
+$chunks[2]= $modx->newObject('modChunk');
+$chunks[2]->fromArray(array(
+    'id' => 1,
+    'name' => 'notifyDefaultFilter',
+    'description' => '',
+    'snippet' => file_get_contents($sources['source_core'].'/elements/chunks/notifydefaultfilter.chunk.tpl'),
+    'properties' => '',
+),'',true,true);
+
 foreach ($chunks as $ch) {
     $attributes= array(
         xPDOTransport::UNIQUE_KEY => 'name',
