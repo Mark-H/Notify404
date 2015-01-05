@@ -132,17 +132,20 @@ if (empty($message)) {
 }
 
 /* Send the email */
-$modx->getService('mail', 'mail.modPHPMailer');
-$modx->mail->set(modMail::MAIL_BODY,$message);
-$modx->mail->set(modMail::MAIL_FROM,$mailfrom);
-$modx->mail->set(modMail::MAIL_FROM_NAME,'Notify404');
-$modx->mail->set(modMail::MAIL_SENDER,'Notify404');
-$modx->mail->set(modMail::MAIL_SUBJECT,'[Notify404]'. (($banned) ? ' [Banned]' : '') .' Not found: '.$phs['request']);
-$modx->mail->address('to',$mailto);
-$modx->mail->address('reply-to',$replyto);
-$modx->mail->setHTML(true);
-if (!$modx->mail->send()) {
+$mail = $modx->getService('mail', 'mail.modPHPMailer');
+
+$mail->set(modMail::MAIL_BODY, $message);
+$mail->set(modMail::MAIL_FROM, $mailfrom);
+$mail->set(modMail::MAIL_FROM_NAME, 'Notify404');
+$mail->set(modMail::MAIL_SUBJECT, '[Notify404] Not found: ' . $phs['request']);
+
+$mail->address('to', $mailto);
+$mail->address('reply-to', $replyto);
+$mail->setHTML(true);
+if (!$mail->send()) {
     $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] An error occurred while trying to send a 404 Page Not Found notification email.');
+    $modx->log(modX::LOG_LEVEL_ERROR,'[Notify404] ' . $mail->mailer->ErrorInfo);
 }
-$modx->mail->reset();
+$mail->reset();
+
 return;
